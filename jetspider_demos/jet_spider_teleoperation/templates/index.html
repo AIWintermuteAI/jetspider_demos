@@ -1,0 +1,176 @@
+<html>
+<head>
+<title>Jetspider Teleop</title>
+<script type="text/javascript">
+document.onkeypress = keypressed;
+var last_action = "";
+var start_dt = new Date ( );
+var last_mills = start_dt.getTime ( );
+
+function sendMotion (action) {
+   var run_dt = new Date ( );
+   var mills = run_dt.getTime ( );
+
+   // If a dup, ignore if newer than .500ms
+   if (action == last_action && (mills - last_mills) <= 500)
+      return;
+
+   last_mills = mills;
+   last_action = action;
+   request = new XMLHttpRequest ( );
+   request.open ("GET", action, true);
+   request.send ( );
+}
+
+function keypressed (event) {
+   var keyCd = ('charCode' in event) ? event.charCode : event.keyCode;
+
+   if (keyCd == 49)            // 1
+      sendMotion ('panlt')
+
+   if (keyCd == 50)            // 2
+      sendMotion ('panrt')
+
+   if (keyCd == 51)            // 3
+      sendMotion ('panfull_lt')
+
+   if (keyCd == 52)
+      sendMotion ('panfull_rt') // 4
+
+   if (keyCd == 47)            // /
+      sendMotion ('home')
+
+   if (keyCd == 119 || keyCd == 87)  // w
+      sendMotion ('forward')
+
+   if (keyCd == 122 || keyCd == 90)  // z
+      sendMotion ('backward')
+
+   if (keyCd == 97 || keyCd == 65)   // a
+      sendMotion ('left')
+
+   if (keyCd == 104 || keyCd == 72)  // h
+      sendMotion ('stop')
+
+   if (keyCd == 115 || keyCd == 83)  // s
+      sendMotion ('right')
+}
+
+</script>
+</head>
+
+
+
+<center>
+   Jetspider Teleop
+   <font face="Arial">
+   <table name="Table" border="0" cellpadding="6">
+      <tr>
+         <td align="center">
+            <input type="radio" name="run_time" value="42" id="short_time"
+            onclick="sendMotion ('short_time');">Short run
+         </td>
+         <td align="center">
+            <input type="radio" name="run_time" value="84" id="mid_run"
+            onclick="sendMotion ('mid_run');" checked>Med run
+         </td>
+         <td align="center">
+            <input type="radio" name="run_time" value="126" id="continuous"
+            onclick="sendMotion ('continuous');">Continuous
+         </td>
+      </tr>
+      <tr>
+         <td align="center">
+            Pan
+            <br>
+            <input type="hidden" name="panlt" id="panlt" />
+            <input type="image" src="1leftarrow.png"
+            id="imgpanlt" onclick="sendMotion ('panlt');"
+            onkeypress="keypressed (event);"/>
+            <input type="hidden" name="panrt" id="panrt" />
+            <input type="image" src="1rightarrow.png"
+            id="imgpanrt" onclick="sendMotion ('panrt');"/>
+         </td>
+         <td align="center">
+            Home
+            <br>
+            <input type="hidden" name="homecam" id="homecam" />
+            <input type="image" src="gohome.png"
+            id="imghome" onclick="sendMotion ('home');"/>
+         </td>
+         <td align="center">
+            Full Pan
+            <br>
+            <input type="hidden" name="panfull_lt" id="panfull_lt" />
+            <input type="image" src="arrow-left-double.png"
+            id="imgpanall_lt" onclick="sendMotion ('panfull_lt');"
+            onkeypress="keypressed (event);"/>
+            <input type="hidden" name="panfull_rt" id="panfull_rt" />
+            <input type="image" src="arrow-right-double.png"
+            id="imgpanall_rt" onclick="sendMotion ('panfull_rt');"/>
+         </td>
+      </tr>
+      <tr>
+         <td align="center">
+            Forward
+            <br>
+            <input type="hidden" name="forward" value="0" id="forward" />
+            <input type="image" src="forward.png" id="imgforward"
+            onclick="sendMotion ('forward');"/>
+         </td>
+      </tr>
+      <tr>
+         <td align="center">
+            Left
+            <br>
+            <input type="hidden" name="left" value="0" id="left" />
+            <input type="image" src="left.png" id="imgleft"
+            onclick="sendMotion ('left');"/>
+         </td>
+         <td align="center">
+            Stop
+            <br>
+            <input type="hidden" name="stop" value="0" id="stop" />
+            <input type="image" src="stop.png" width="50" id="imgstop"
+            onclick="sendMotion ('stop');"/>
+         </td>
+         <td align="center">
+            Right
+            <br>
+            <input type="hidden" name="right" value="0" id="right" />
+            <input type="image" src="right.png" id="imgright"
+            onclick="sendMotion ('right');"/>
+         </td>
+      </tr>
+      <tr>
+         <td align="center">
+            Backward
+            <br>
+            <input type="hidden" name="backward" value="0" id="backward" />
+            <input type="image" src="backward.png" id="imgbackward"
+            onclick="sendMotion ('backward');"/>
+         </td>
+      </tr>
+      <tr>
+         <td align="center">
+            <input type="radio" name="speed" value="42" id="speed_low"
+            onclick="sendMotion ('speed_low');">Low speed
+         </td>
+         <td align="center">
+            <input type="radio" name="speed" value="84" id="speed_mid"
+            onclick="sendMotion ('speed_mid');" checked>Mid speed
+         </td>
+         <td align="center">
+            <input type="radio" name="speed" value="126" id="speed_hi"
+            onclick="sendMotion ('speed_hi');">High speed
+         </td>
+      </tr>
+   </table>
+   <br>
+   <center>
+    <img src="{{ url_for('video_feed') }}">
+   </center>
+   <br><br>
+   </font>
+</center>
+</html>
